@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+<br>
+<br>
+<script>
+    function updateConfirm() {
+    
+    let text = "Confirm profile update?\nOk=Update data, please login again.";
+    if (confirm(text) == true) {
+        document.getElementById("updateForm").submit();
+    } else {
+        alert("Cancelled.");
+    }
+}
+
+function deleteConfirm() {
+    
+    let text = "Are you sure you want to delete your account?\nThis action cannot be undone.";
+    if (confirm(text) == true) {
+        document.getElementById("updateForm").submit();
+    } else {
+        alert("Cancelled.");
+    }
+}
+</script>
+<a style="text-align: center;">
+    <h1 class="heading-2">Profile Info</h1>
+</a>
+<div class="w-layout-blockcontainer container-4 w-container">
+    <div class="w-form">
+      <form id="email-form" name="email-form" data-name="Email Form" action="/update_profile" method="post" class="form-2" data-wf-page-id="6593bf7c169f4feecaf90ae0" data-wf-element-id="b7cdd39a-878e-7f14-4843-71c71f8030de">
+        <label for="userid">User ID</label>
+        <input class="w-input" maxlength="256" name="userid" data-name="UserId" value="{{ user.userid }}" type="text" id="userid">
+        <label for="fullname">Full Name</label>
+        <input class="w-input" maxlength="256" name="fullname" data-name="FullName" value="{{ user.fullname }}" type="text" id="fullname">
+        <label for="username">User Name</label>
+        <input class="w-input" maxlength="256" name="username" data-name="UserName" value="{{ user.username }}" type="text" id="username">
+        <label for="email">Email Address</label>
+        <input class="w-input" maxlength="256" name="email" data-name="Email" value="{{ user.email }}" type="email" id="email" required="">
+        <label for="Password">Password</label>
+        <input class="w-input" maxlength="256" name="Password" data-name="Password" value="{{ user.password }}" type="password" id="Password" required="">
+        <label for="ConfirmPassword">Confirm Password</label>
+        <input class="w-input" maxlength="256" name="ConfirmPassword" data-name="ConfirmPassword" value="{{ user.password }}" type="password" id="ConfirmPassword" required="">
+        <label for="Password-2">Risk Status</label>
+        <select id="Risk-Status" name="Risk-Status" data-name="Risk Status" required="" class="select-field w-select">
+          <option value="">{{ user.riskstatus }}</option>
+          <option value="Risk Seeker">Risk Seeker</option>
+          <option value="Risk Averser">Risk Averser</option>
+          <option value="Risk Neutral">Risk Neutral</option>
+        </select>
+        <label for="Password-2">age</label>
+        <select id="Age" name="Age" data-name="Age" required="" class="select-field-2 w-select">
+          <option value="">{{ user.agerange }}</option>
+          <option value="18 to 30">18 to 30</option>
+          <option value="31 to 40">31 to 40</option>
+          <option value="41 to 50">41 to 50</option>
+          <option value="51 to 60">51 to 60</option>
+          <option value="61 and above">61 and above</option>
+        </select>
+        
+        <button type="submit" name="action" value="update" onclick="updateConfirm()" class="button cc-contact-us w-inline-block">Update</button>
+        <br>
+        <button type="submit" name="action" value="delete" onclick="deleteConfirm()" class="button cc-contact-us w-inline-block">Delete Account</button>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for msg in messages %}     
+                <div class="alert alert-danger" role="alert" style="text-align: center;">
+                    <form action="{{ url_for('login') }}">
+                        <strong>{{msg}}</strong>
+                        <button>X</button>
+                    </form>
+                </div>     
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+{% endblock %}

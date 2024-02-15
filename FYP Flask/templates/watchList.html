@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}
+Stocks
+{% endblock %}
+
+{% block content %}
+
+<head>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',    filename='css/main.css') }}" rel="stylesheet">
+</head>
+        <br>
+        <br>
+
+        <h1 style="text-align: center; background-color: black; color: white;">Your Watchlist</h1>
+
+        <br>
+
+        {% if watchlist %}
+        <div style="background-color: white; ">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Open</th>
+                        <th>High</th>
+                        <th>Low</th>
+                        <th>Close</th>
+                        <th>Adj Close</th>
+                        <th>Volume</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td><a href="{{ url_for('stock_detail', symbol=row['Symbol']) }}">{{ row['Symbol'] }}</a></td>
+                            <td>{{ '%0.2f' % (row['Open'])|float }}</td>
+                            <td>{{ '%0.2f' % (row['High'])|float  }}</td>
+                            <td>{{ '%0.2f' % (row['Low'])|float  }}</td>
+                            <td>{{ '%0.2f' % (row['Close'])|float  }}</td>
+                            <td>{{ '%0.2f' % (row['Adj Close'])|float  }}</td>
+                            <td>{{ row['Volume']}}</td>
+                            <td>
+                                <form action="{{ url_for('remove_from_watchlist', symbol=row['Symbol']) }}" method="get">
+                                    <button class="button w-inline-block" type="submit">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <h1 style="text-align: center; color: white; background-color: black;">Watchlist is Empty</h1>
+        {% endif %}
+
+
+{% endblock %}

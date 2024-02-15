@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+Manage Users
+{% endblock %}
+
+{% block home %}
+
+<head>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',    filename='css/main.css') }}" rel="stylesheet">
+</head>
+
+<div class="container mt-5">
+    <form action="/search" method="post" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="searchbar" placeholder="Search for username">
+            <div class="input-group-append">
+                <button type="submit" class="button w-inline-block">Search</button>
+            </div>
+        </div>
+    </form>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Email</th>
+                    <th>Full Name</th>
+                    <th>Permission</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.userid }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.password }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.fullname }}</td>
+                    <td>{{ user.permission }}</td>
+                    <td><a href="/edit?userid={{ user.userid }}" class="button w-inline-block">EDIT<i class="fa fa-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %} 

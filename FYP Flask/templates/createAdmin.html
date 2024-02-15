@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Admin
+{% endblock %}
+  
+{% block content %}
+  
+<head>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',    filename='css/main.css') }}" rel="stylesheet">
+</head>
+<div class="w-layout-blockcontainer container-4 w-container">
+    <div class="w-form">
+      <form id="email-form" name="email-form" data-name="Email Form" method="post" class="form-2" data-wf-page-id="6593bf7c169f4feecaf90ae0" data-wf-element-id="b7cdd39a-878e-7f14-4843-71c71f8030de">
+        <label for="name">Full Name</label>
+        <input class="w-input" maxlength="256" name="name" data-name="Name" placeholder="" type="text" id="name">
+        <label for="username">User Name</label>
+        <input class="w-input" maxlength="256" name="username" data-name="UserName" placeholder="" type="text" id="username">
+        <label for="email">Email Address</label>
+        <input class="w-input" maxlength="256" name="email" data-name="Email" placeholder="" type="email" id="email" required="">
+        <label for="Password">Password</label>
+        <input class="w-input" maxlength="256" name="Password" data-name="Password" placeholder="" type="password" id="Password" required="">
+        <label for="ConfirmPassword">Confirm Password</label>
+        <input class="w-input" maxlength="256" name="ConfirmPassword" data-name="ConfirmPassword" placeholder="" type="password" id="ConfirmPassword" required="">
+        <label for="Password-2">Risk Status</label><select id="Risk-Status" name="Risk-Status" data-name="Risk Status" required="" class="select-field w-select">
+          <option value="">Select one...</option>
+          <option value="Risk Seeker">Risk Seeker</option>
+          <option value="Risk Averser">Risk Averser</option>
+          <option value="Risk Neutral">Risk Neutral</option>
+        </select><label for="Password-2">age</label><select id="Age" name="Age" data-name="Age" required="" class="select-field-2 w-select">
+          <option value="">Select one...</option>
+          <option value="18 to 30">18 to 30</option>
+          <option value="31 to 40">31 to 40</option>
+          <option value="41 to 50">41 to 50</option>
+          <option value="51 to 60">51 to 60</option>
+          <option value="61 and above">61 and above</option>
+        </select><input type="submit" data-wait="Please wait..." class="button cc-contact-us w-inline-block" value="CREATE ADMIN"></form>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for msg in messages %}     
+                <div class="alert alert-danger" role="alert" style="text-align: center;">
+                    <form action="{{ url_for('viewUsers') }}">
+                        <strong>{{msg}}</strong>
+                        <button>X</button>
+                    </form>
+                </div>     
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+</div>
+  
+{% endblock %}

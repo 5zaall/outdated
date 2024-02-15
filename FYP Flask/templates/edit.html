@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+<br>
+<br>
+<script>
+    function updateConfirm() {
+    
+    let text = "Confirm profile update?\nOk=Update data, please login again.";
+    if (confirm(text) == true) {
+        document.getElementById("updateForm").submit();
+    } else {
+        alert("Cancelled.");
+    }
+}
+
+function deleteConfirm() {
+    
+    let text = "Are you sure you want to delete your account?\nThis action cannot be undone.";
+    if (confirm(text) == true) {
+        document.getElementById("updateForm").submit();
+    } else {
+        alert("Cancelled.");
+    }
+}
+</script>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="text-center">Profile Info</h1>
+                </div>
+                <div class="card-body">
+                    <form id="updateForm" action="/update_profile" method="post">
+                        <div class="form-group">
+                            <label for="userid">User ID:</label>
+                            <input type="text" class="form-control" name="userid" id="userid" value="{{ user.userid }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" class="form-control" name="username" id="username" value="{{ user.username }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="text" class="form-control" name="password" id="password" value="{{ user.password }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" name="email" id="email" value="{{ user.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="fullname">Full Name:</label>
+                            <input type="text" class="form-control" name="fullname" id="fullname" value="{{ user.fullname }}">
+                        </div>
+                        <button type="submit" name="action" value="update" onclick="updateConfirm()" class="btn btn-primary">Update</button>
+                        <button type="submit" name="action" value="delete" onclick="deleteConfirm()" class="btn btn-danger">Delete Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+
+{% endblock %}

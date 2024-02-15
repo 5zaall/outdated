@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}
+Stocks
+{% endblock %}
+
+{% block content %}
+<!doctype html>
+    <html lang="en">
+    <head>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <!-- Custom styles for this template -->
+        <link href="{{ url_for('static',    filename='css/main.css') }}" rel="stylesheet">
+    </head>
+    <body>
+        <br>
+        <br>
+
+        <div>
+
+            <div id="widgetContent">
+            <main role="main" class="inner">
+                <div class="input-group mb-3">
+                    <input id="symbol" type="text" class="form-control" placeholder="Enter Stock ETF or Mutual Fund Symbol" aria-label="Stock, ETF or Mutual Fund" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="button w-inline-block" type="button" onclick="site.SubmitForm(); setSymbol()">Search</button>
+                    </div>                        
+                    </div>
+                <div id="chart_container"></div>
+            </main>
+            </div>
+        </div>
+
+        <h1 style="text-align: center; color: white; background-color: black;">Search Stocks</h1>
+
+        
+        <form method="post" action="/search">
+            <div class="input-group mb-3">
+                <input type="text" id="search_symbol" class="form-control" name="search_symbol" placeholder="Enter Stock ETF or Mutual Fund Symbol" required>
+                <div class="input-group-append">
+                    <button class="button w-inline-block" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+        
+    
+        {% if searchDetails %}
+            <div style="background-color: white; ">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Open</th>
+                            <th>High</th>
+                            <th>Low</th>
+                            <th>Close</th>
+                            <th>Adj Close</th>
+                            <th>Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in searchDetails %}
+                            <tr>
+                                <td><a href="{{ url_for('stock_detail', symbol=row['Symbol']) }}">{{ row['Symbol'] }}</a></td>
+                                <td>{{ '%0.2f' % (row['Open'])|float }}</td>
+                                <td>{{ '%0.2f' % (row['High'])|float  }}</td>
+                                <td>{{ '%0.2f' % (row['Low'])|float  }}</td>
+                                <td>{{ '%0.2f' % (row['Close'])|float  }}</td>
+                                <td>{{ '%0.2f' % (row['Adj Close'])|float  }}</td>
+                                <td>{{ row['Volume']}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+
+        <br>
+        <br>
+        <br>
+
+        <h1 style="text-align: center; color: white; background-color: black;">Popular Stocks</h1>
+
+
+        
+        <div style="background-color: white; ">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Open</th>
+                        <th>High</th>
+                        <th>Low</th>
+                        <th>Close</th>
+                        <th>Adj Close</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td><a href="{{ url_for('stock_detail', symbol=row['Symbol']) }}">{{ row['Symbol'] }}</a></td>
+                            <td>{{ '%0.2f' % (row['Open'])|float }}</td>
+                            <td>{{ '%0.2f' % (row['High'])|float  }}</td>
+                            <td>{{ '%0.2f' % (row['Low'])|float  }}</td>
+                            <td>{{ '%0.2f' % (row['Close'])|float  }}</td>
+                            <td>{{ '%0.2f' % (row['Adj Close'])|float  }}</td>
+                            <td>{{ row['Volume']}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        
+    
+        <script 
+            src="{{ url_for('static',    filename='js/main.js') }}" defer>
+        </script>
+
+        
+    </body>
+</html>
+{% endblock %}

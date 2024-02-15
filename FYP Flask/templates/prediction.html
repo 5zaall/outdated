@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}
+Stock Prediction
+
+{% endblock %}
+
+{% block content %}
+<!doctype html>
+    <html lang="en">
+    <head>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <!-- Custom styles for this template -->
+        <link href="{{ url_for('static',    filename='css/main.css') }}" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction for {{ symbol }}</title>
+    <!-- Add Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<h1 style="text-align: center; color: white; background-color: black;">Stock Price Prediction</h1>
+
+
+    <form method="post" action="/predict">
+        <div class="input-group mb-3">
+            <input type="text" id="ticker_symbol" class="form-control" name="ticker_symbol" placeholder="Enter Stock ETF or Mutual Fund Symbol" required>
+            <br>
+            <input type="date" id="end_date" class="form-control" name="end_date" required>
+            <div class="input-group-append">
+                <button class="button w-inline-block" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+
+    {% if prediction %}
+        <h1 style="text-align: center; color: white; background-color: black;">Past Stock Prices and Predicted Price</h1>
+        <h2>{{ prediction }}</h2>
+        <div class="plot" style="height: 100%; width: 100%;">{{ plot_html|safe }}</div>
+
+    {% endif %}
+
+    {% if session.permission == "Admin" %}
+
+        {% if accuracy %}
+        <h1 style="text-align: center; color: white; background-color: black;">Model Accuracy</h1>
+            <h2>{{ accuracy }}%</h2>
+        {% endif %}
+
+        {% if mse_avg %}
+            <h2>MSE Average: {{ '%0.2f' % (mse_avg)|float }}%</h2>
+        {% endif %}
+
+        {% if msa_avg %}
+            <h2>MSA Average: {{ '%0.2f' % (msa_avg)|float }}%</h2>
+        {% endif %}
+
+        {% if r2_avg %}
+            <h2>R2 Average: {{ '%0.2f' % (r2_avg)|float }}%</h2>
+        {% endif %}
+
+    {% endif %}
+
+    {% if headlines %}
+        <h2>News Headlines:</h2>
+        <ul>
+            {% for headline in headlines %}
+                <li>{{ headline }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+
+{% endblock %}

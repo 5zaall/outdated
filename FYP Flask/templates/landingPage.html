@@ -1,0 +1,55 @@
+{% extends "base1.html" %}
+
+{% block title %}
+Landing Page
+{% endblock %}
+
+{% block headContent %}
+
+  <meta content="Business - Webflow HTML website template" property="og:title">
+  <meta content="https://uploads-ssl.webflow.com/5c6eb5400253230156de2bd6/5cdc268dd7274d5c05c6009a_Business%20SEO.jpg" property="og:image">
+  <meta content="Business - Webflow HTML website template" property="twitter:title">
+  <meta content="https://uploads-ssl.webflow.com/5c6eb5400253230156de2bd6/5cdc268dd7274d5c05c6009a_Business%20SEO.jpg" property="twitter:image">
+  
+{% endblock %}
+
+{% block content %}
+  <div class="w-layout-blockcontainer container-2 w-container">
+    <h1 class="heading">#1 STOCK MARKET PREDICTION APP</h1>
+  </div>
+  <div class="section cc-store-home-wrap">
+    <div class="container">
+      <div class="motto-wrap"></div>
+      <div class="divider"></div>
+      <div class="home-content-wrap">
+        <div class="w-layout-grid about-grid">
+          <div id="w-node-_86e64837-0616-515b-4568-76c147234d34-caf90ad6">
+            <div class="home-section-wrap">
+              <div class="label cc-light">About</div>
+              <h2 class="section-heading">Who we are</h2>
+              <p class="paragraph-light">Welcome to Stock Sage We&#x27;re a dynamic group of university students passionate about revolutionizing stock market predictions. Our mission is to empower stock market enthusiasts with a cutting-edge app, helping them make informed and strategic investment decisions. Join us on this exciting journey to redefine success in the stock market!</p>
+            </div>
+            <a href="{{url_for('aboutPage')}}" class="button w-inline-block">
+              <div>Learn More</div>
+            </a>
+          </div><img src="https://img.freepik.com/free-vector/gradient-stock-market-concept_23-2149166910.jpg?w=2000&t=st=1707909184~exp=1707909784~hmac=26f63c20f188972573aabdd3ccc922601489656046f4e7c2f8f9407c90715c65" id="w-node-_86e64837-0616-515b-4568-76c147234d3f-caf90ad6" alt="">
+        </div>
+        <div class="w-layout-grid about-grid cc-about-2">
+          <div id="w-node-_86e64837-0616-515b-4568-76c147234d41-caf90ad6">
+            <div class="home-section-wrap">
+              <div class="label cc-light">Team</div>
+              <h2 class="section-heading">What we do</h2>
+              <p class="paragraph-light">At Stock Sage, we develop innovative stock market prediction tools. Our app harnesses advanced algorithms to provide data-driven insights, empowering users to navigate the stock market with confidence and precision. Elevate your investment strategy with us!</p>
+            </div>
+            <a href="{{url_for('workPage')}}" class="button w-inline-block">
+              <div>Learn More</div>
+            </a>
+          </div><img src="https://img.freepik.com/free-photo/multiracial-group-young-creative-people-smart-casual-wear-discussing-business-brainstorming-meeting-ideas-mobile-application-software-design-project-modern-office-coworker-teamwork-concept_7861-2739.jpg?w=2000&t=st=1707909236~exp=1707909836~hmac=abc32af2ba3a7d6deaf52c98a53ef97e631649aa8ec160767fdbdc1a984f8afc" id="w-node-_86e64837-0616-515b-4568-76c147234d4c-caf90ad6" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="container"></div>
+  </div>
+{% endblock %}
