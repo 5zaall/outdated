@@ -1,13 +1,13 @@
 absl-py==2.0.0
-aiohttp==3.8.5        
-aiosignal==1.3.1      
-appdirs==1.4.4        
-astunparse==1.6.3     
-async-timeout==4.0.3  
+aiohttp==3.8.5
+aiosignal==1.3.1
+appdirs==1.4.4
+astunparse==1.6.3
+async-timeout==4.0.3
 attrs==23.1.0
 beautifulsoup4==4.12.2
-blinker==1.7.0        
-cachetools==5.3.2     
+blinker==1.7.0
+cachetools==5.3.2
 cbor2==5.4.6
 certifi==2023.7.22
 charset-normalizer==3.2.0
@@ -19,6 +19,7 @@ cycler==0.12.1
 finnhub-python @ git+https://github.com/Finnhub-Stock-API/finnhub-python.git@881aa79999429d0415c7886329caa3f7b8016c59
 finplot==1.9.3
 Flask==3.0.0
+Flask-MySQLdb==2.0.0
 flatbuffers==23.5.26
 fonttools==4.47.0
 frozendict==2.3.10
@@ -28,6 +29,7 @@ google-auth==2.25.2
 google-auth-oauthlib==1.2.0
 google-pasta==0.2.0
 grpcio==1.60.0
+gunicorn==21.2.0
 h5py==3.10.0
 html5lib==1.1
 idna==3.4
@@ -46,6 +48,7 @@ ml-dtypes==0.2.0
 mplfinance==0.12.10b0
 multidict==6.0.4
 multitasking==0.0.11
+mysqlclient==2.2.4
 numpy==1.26.2
 oauthlib==3.2.2
 opt-einsum==3.3.0
@@ -55,6 +58,7 @@ peewee==3.17.0
 Pillow==10.1.0
 plotly==5.18.0
 protobuf==4.23.4
+psycopg2==2.9.9
 pubnub==7.2.0
 pyasn1==0.5.1
 pyasn1-modules==0.3.0

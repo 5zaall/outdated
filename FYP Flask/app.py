@@ -19,52 +19,31 @@
 
 import sys
 import json
+import finnhub 
 import mariadb
-import yfinance as yf
-import pandas as pd
-import random
-import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-import finplot as fplt
-
-from mplfinance.original_flavor import candlestick_ohlc
-import matplotlib.pyplot as plt
-from matplotlib.dates import date2num
-from io import BytesIO
-import base64
-
-
-from waitress       import serve
-from hashlib        import sha256
-from configobj      import ConfigObj
-from datetime       import timedelta
-from datetime       import date
-
-
-from flask          import request, session, flash
-from flask          import Flask, redirect, url_for, render_template
-from flask          import Flask, request, render_template, jsonify
-
-from flask import Flask, render_template, request
-import yfinance as yf
-import pandas as pd
 import numpy as np
-from datetime import datetime
-from sklearn.preprocessing import MinMaxScaler 
-from sklearn.model_selection import TimeSeriesSplit
-from keras.models import load_model
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+import pandas as pd
+import yfinance as yf
+import plotly.graph_objects as go
 
-import plotly.graph_objs as go
-from plotly.subplots import make_subplots
+from plotly.subplots            import make_subplots
+from datetime                   import date
+from datetime                   import datetime
+from datetime                   import timedelta
 
+from flask                      import request, session, flash
+from flask                      import Flask, request, render_template, jsonify
+from flask                      import Flask, redirect, url_for, render_template
+from waitress                   import serve
 
-# Package for additional features
-from talib import abstract as ta
-from talib import RSI
-from talib import MACD
-import finnhub # Extract economical news 
+from sklearn.preprocessing      import MinMaxScaler 
+from sklearn.model_selection    import TimeSeriesSplit
+from sklearn.metrics            import mean_squared_error, r2_score, mean_absolute_error
+from keras.models               import load_model
+
+from talib                      import abstract as ta
+from talib                      import RSI
+from talib                      import MACD
 
 
 ################################################################################
@@ -108,14 +87,8 @@ class FlaskApp:
         self.__flask_app                        = None
         self.__flask_app_host                   = None
         self.__flask_app_port                   = None
-        #self.__flask_app_mode                   = "DEVELOPMENT" 
-        self.__flask_app_mode                   = "PRODUCTION"     
-
-        # Config
-        self.__flask_app_config                 = ConfigObj("config.txt")
-
-        # Encryption 
-        self.__flask_app_salt                   = None
+        self.__flask_app_mode                   = "DEVELOPMENT" 
+        #self.__flask_app_mode                   = "PRODUCTION"     
 
         # Database
         self.__flask_app_connection             = None
@@ -135,33 +108,23 @@ class FlaskApp:
     # ==========================================================================
 
     def read_config(self):
-        """ This method reads the operator console configuration from the config file.
+        """ This method reads the operator console configuration.
 
         Returns:
             [type]: none
         """
-
-        # // Need to configure database settings and api settings later on 
         try:
-            # Read Database Settings
-
+            # Database Settings
             # change according to your database settings 
             config = {
-                'host': 'StockSage.mysql.pythonanywhere-services.com',
+                'host': 'mysql://qskzqwtso390pyj6:d9o7y1yerezi03vn@u3r5w4ayhxzdrw87.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/k9v88pncwccgj9ak',
                 'port': 3306,
-                'user': 'StockSage',
-                'password': 'fypfyp1234',
-                'database': 'StockSage$default'
+                'user': 'root',
+                'password': '1234',
+                'database': 'db_am_manager'
             }
 
             self.__flask_app_connection = mariadb.connect(**config)
-
-            # Read encription Settings
-            #self.__flask_app_salt = self.__flask_app_config['encription']['salt']
-
-            # Read API Settings
-            #self.__flask_app_host= self.__flask_app_config['api']['host']
-            #self.__flask_app_port = int(self.__flask_app_config['api']['port'])
 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
@@ -170,7 +133,7 @@ class FlaskApp:
     #####
     def start_flask(self):
 
-        #// for database 
+        # for database 
         # Get Cursor
         self.__flask_app_cursor = self.__flask_app_connection.cursor(dictionary = True)
 
@@ -270,26 +233,27 @@ class FlaskApp:
         def profile():
             return self.__page_profile()
         
+        # stock details page
         @self.__flask_app.route('/stock_detail/<symbol>')
         def stock_detail(symbol):
            return self.__page_stock_details(symbol)
         
-
-        # Route for the prediction page
+        # prediction page
         @self.__flask_app.route('/prediction')
         def prediction():
             return self.__page_prediction()
         
-        # Route for the prediction page
+        # Route for prediction
         @self.__flask_app.route('/predict', methods=['POST'])
         def predict():
             return self.__predict()
         
-        # update profile route
+        # update profile page
         @self.__flask_app.route("/update_profile", methods=["POST"])
         def update_profile():
             return self.__page_update_profile()
-            
+
+        # route for getting stock symbol   
         @self.__flask_app.route("/quote")
         def display_quote():
             # get a stock ticker symbol from the query string
@@ -302,7 +266,7 @@ class FlaskApp:
             #return the object via the HTTP Response
             return jsonify(quote.info)
 
-        # API route for pulling the stock history
+        # route for pulling the stock history
         @self.__flask_app.route("/history")
         def display_history():
             #get the query string parameters
@@ -329,17 +293,17 @@ class FlaskApp:
         def viewEnquiries():
             return self.__page_viewEnquiries()
         
-        # View edit page
+        # edit page
         @self.__flask_app.route("/edit", methods=["POST", "GET"])
         def edit():
             return self.__page_edit()
         
-        # Search route
-        @self.__flask_app.route("/search", methods=["POST", "GET"])
+        # route for searching user
+        @self.__flask_app.route("/searchUser", methods=["POST", "GET"])
         def search():
-            return self.__page_search()
+            return self.__search_user()
 
-        # logout        
+        # route to logout        
         @self.__flask_app.route("/logout")
         def logout():
             return self.__page_logout()
@@ -370,7 +334,7 @@ class FlaskApp:
     # --------------------------------------------------------------------------
 
 
-    ##### 
+    # method to evaluate machibe learning model
     def evaluate_model(self, X, y, model):
         tscv = TimeSeriesSplit(n_splits=10)
         mse_scores = []
@@ -398,48 +362,47 @@ class FlaskApp:
 
         return np.mean(mse_scores), np.mean(mae_scores), np.mean(r2_scores)
 
-    def news_sentiment(self, end_date, company_code):
+    # method to get related news 
+    def news_sentiment(self, date, company_code):
 
         api_key = "cn0ah7pr01qkcvkfucv0cn0ah7pr01qkcvkfucvg"; 
-
         finnhub_client = finnhub.Client(api_key=api_key)
 
-        # Get all the news of that day for the company
-        data = finnhub_client.company_news(company_code, _from =end_date, to=end_date)
+        start_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
 
+
+        # Get all the news of that day for the company
+        data = finnhub_client.company_news(company_code, _from = start_date, to=date)
         return data
-    
+
+
     def __landing_page(self):
-        """ This method reads user input for login details
-            and allows user to log in after checking credentials.
+        """ This method renders the landing page.
         """
 
         return render_template("landingPage.html")
     
     def __about_page(self):
-        """ This method reads user input for login details
-            and allows user to log in after checking credentials.
+        """ This method renders the about page. 
         """
 
         return render_template("about.html")
     
     def __work_page(self):
-        """ This method reads user input for login details
-            and allows user to log in after checking credentials.
+        """ This method renders the work page.
         """
 
         return render_template("work.html")
     
     def __team_page(self):
-        """ This method reads user input for login details
-            and allows user to log in after checking credentials.
+        """ This method renders the team page.
         """
 
         return render_template("team.html")
     
     def __contact_page(self):
-        """ This method reads user input for login details
-            and allows user to log in after checking credentials.
+        """ This method renders the contact page 
+            and saves enquiries into the database.
         """
 
         if request.method == "POST":
@@ -465,17 +428,14 @@ class FlaskApp:
         else:
             return render_template("contact.html")
 
-
-
-    #####
+    
     def __page_login(self):
         """ This method reads user input for login details
             and allows user to log in after checking credentials.
         """
 
         if request.method == "POST":
-
-           
+      
             session["name"] = request.form.get("name")
             session["password"] = request.form.get("Password")
                 
@@ -483,12 +443,6 @@ class FlaskApp:
             input_password = request.form["Password"]
                 
             valid_user = False
-                
-            #//use after setting up encryption 
-            # salt = self.__flask_app_salt
-            # input_ = salt + input_password
-            # password_string_to_db = sha256(input_.encode('utf-8')).hexdigest()
-
 
             if user == "" or input_password == "":
                 flash("User Name or Password cannot be empty!", "info")
@@ -512,17 +466,12 @@ class FlaskApp:
                     if input_password == password["password"]:
 
                         #//this code block is used to distinguish users with diffeent permissions
-                        #//can be used later on in the project 
                         self.__flask_app_cursor.execute(
                             "SELECT permission FROM user WHERE username = ?",
                             (user,)
                         )
                         for permission in self.__flask_app_cursor.fetchall():
                             session["permission"] = permission["permission"]
-
-                        #for the time being, permission will always be admin
-                        #session["permission"] = "Admin"
-                        #directs user to main page after successful login 
                                 
                         # List of 10 popular stock symbols
                         stock_symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'DIS', 'NVDA', 'BA', 'NFLX', 'INTC']
@@ -572,7 +521,9 @@ class FlaskApp:
 
 
     def __page_register(self):
-
+        """ This method reads user input for account details
+            and allows user to create a new account.
+        """
 
         if request.method == "POST":
 
@@ -617,6 +568,9 @@ class FlaskApp:
             return render_template("register.html")
 
     def __page_createAdmin(self):
+        """ This method reads user input for admin account details
+            and allows user to create a new admin account.
+        """
 
         if not session.get("name"):
             return redirect("/")
@@ -666,7 +620,7 @@ class FlaskApp:
             return render_template("createAdmin.html")
         
     def __page_profile(self):
-        """ This method is for profile page
+        """ This method renders the profile page.
         """
 
         username = session.get("name")
@@ -686,7 +640,7 @@ class FlaskApp:
         
     def __page_home(self):
 
-        """ This method is for home page
+        """ This method renders the home page
         """
         if not session.get("name"):
             return redirect("/")
@@ -725,8 +679,8 @@ class FlaskApp:
             return render_template("home.html", data=all_data.to_dict('records'))
         
     def __search_stock(self):
-
-        """ This method is for home page
+        """ This method allows users to search 
+            for specific stock and renders the home page.
         """
         if not session.get("name"):
             return redirect("/")
@@ -775,8 +729,7 @@ class FlaskApp:
             return render_template("home.html", data=all_data.to_dict('records'), searchDetails=search_details.to_dict('records'))
 
     def __page_watchList(self):
-
-        """ This method is for watch list page
+        """ This method renders the watch list page.
         """
         if not session.get("name"):
             return redirect("/")
@@ -830,7 +783,8 @@ class FlaskApp:
                 return render_template("watchlist.html", watchlist = self.watchlist, data={})
 
     def __page_stock_details(self, symbol):
-
+        """ This method renders the stock details page.
+        """
         if not session.get("name"):
             return redirect("/")
             
@@ -876,7 +830,8 @@ class FlaskApp:
             return render_template('stock_detail.html', symbol=symbol, stock_info=stock_info, stock_news=stock_news, candlestick_chart=candlestick_chart)
 
     def __page_prediction(self):
-
+        """ This renders the prediction page.
+        """
         if not session.get("name"):
             return redirect("/")
             
@@ -885,13 +840,16 @@ class FlaskApp:
             return render_template('prediction.html')
 
     def __predict(self):
-
+        """ This method reads user input for prediction 
+            and renders the prediction page with    
+            the relevant predicted information and news.
+        """
         if not session.get("name"):
             return redirect("/")
             
         else:
             # Load the pre-trained LSTM model
-            model = load_model('model.h5')
+            model = load_model('final_model.h5')
 
             ticker_symbol = request.form['ticker_symbol']
             end_date = request.form['end_date']
@@ -977,12 +935,31 @@ class FlaskApp:
             mse_avg, mae_avg, r2_avg = self.evaluate_model(X, df['Adj Close'].values, model)
             accuracy = r2_avg * 100
 
-            # Display the news 
+            # Retrive the model metadata 
+            with open('model_metadata.json', 'r') as f:
+                metadata = json.load(f)
+            
+            model_version = metadata['version']
+            model_date_modified = metadata['date_modified']
 
-            #headlines = [data[i]['headline'] for i in range(len(news_sentiment(end_date, ticker_symbol)))]
+            #display news
+            news_data = self.news_sentiment(end_date, ticker_symbol)
+            print("ELEMENTS IN THE NEWS DATA: ", len(news_data))
 
+            news_info = []
+            for news_item in news_data:
 
-            # Render to the template 
+                timestamp = news_item['datetime']
+                news_date = datetime.utcfromtimestamp(timestamp)
+
+                news_info.append({
+                    'datetime': news_date.strftime('%Y-%m-%d %H:%M:%S'),  
+                    'headline': news_item['headline'],
+                    'image': news_item['image'],
+                    'url': news_item['url']
+                })
+
+            # Render the template 
             return render_template('prediction.html',
                                 prediction=f'Predicted price for {ticker_symbol} on {end_date}: {predicted_price:.2f}',
                                 accuracy=f'Accuracy: {accuracy:.2f}',
@@ -990,12 +967,16 @@ class FlaskApp:
                                 mae_avg = mae_avg,
                                 r2_avg = r2_avg, 
                                 plot_html = plot_html,
-                                # headlines = headlines
+                                model_version = model_version,
+                                model_date_modified = model_date_modified,
+                                news_info = news_info
                                 )
 
 
     def __page_update_profile(self):
-
+        """ This method reads user input for account details
+            and allows user to update an existing account.
+        """
         if not session.get("name"):
             return redirect("/")
             
@@ -1028,7 +1009,8 @@ class FlaskApp:
 
 
     def __page_manageUsers(self):
-        """ This method is for view users page
+        """ This method renders the manage user page 
+            and allows user to edit or delete existing users.
         """
         username = session.get("name")
 
@@ -1051,7 +1033,7 @@ class FlaskApp:
             return render_template("manageUsers.html", users=users)
         
     def __page_viewEnquiries(self):
-        """ This method is for view enquiries page
+        """ This method renders the view enquiries page
         """
         username = session.get("name")
         self.__flask_app_cursor.execute(
@@ -1069,7 +1051,7 @@ class FlaskApp:
             return render_template("enquiries.html", enquiries = enquiries)
 
     def __page_edit(self):
-        """ This method is for edit page
+        """ This method renders the edit page
         """
 
         userid = request.args.get("userid")
@@ -1085,8 +1067,8 @@ class FlaskApp:
             
             return render_template("profile.html", user=user)
 
-    def __page_search(self):
-        """ This method is for search
+    def __search_user(self):
+        """ This method allows user to search for specific user
         """
 
         search_term = request.form.get("searchbar")
@@ -1109,7 +1091,7 @@ class FlaskApp:
             
         else:
             print(search_term)
-            return render_template("viewUsers.html", users=users)    
+            return render_template("manageUsers.html", users=users)    
 
     def __page_logout(self):
         """ This method logs the user out and redirects to the landing page

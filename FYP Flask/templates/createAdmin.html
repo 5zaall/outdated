@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 
 {% block title %}
 Create Admin
@@ -43,7 +43,7 @@ Create Admin
           {% if messages %}
             {% for msg in messages %}     
                 <div class="alert alert-danger" role="alert" style="text-align: center;">
-                    <form action="{{ url_for('viewUsers') }}">
+                    <form action="{{ url_for('manageUsers') }}">
                         <strong>{{msg}}</strong>
                         <button>X</button>
                     </form>

@@ -1,8 +1,7 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 
 {% block title %}
 Stock Prediction
-
 {% endblock %}
 
 {% block content %}
@@ -32,7 +31,7 @@ Stock Prediction
             <br>
             <input type="date" id="end_date" class="form-control" name="end_date" required>
             <div class="input-group-append">
-                <button class="button w-inline-block" type="submit">Search</button>
+                <button class="button w-inline-block" type="submit">Predict</button>
             </div>
         </div>
     </form>
@@ -63,17 +62,39 @@ Stock Prediction
             <h2>R2 Average: {{ '%0.2f' % (r2_avg)|float }}%</h2>
         {% endif %}
 
+        {% if model_version %}
+        <h1 style="text-align: center; color: white; background-color: black;">Model Version</h1>
+            <h2>Model Version: {{ model_version }}</h2>
+        {% endif %}
+
+        {% if model_date_modified %}
+            <h2>Model Date Modified: {{ model_date_modified }}</h2>
+        {% endif %}
+
     {% endif %}
 
-    {% if headlines %}
-        <h2>News Headlines:</h2>
+    {% if news_info %}
+        <h1 style="text-align: center; color: white; background-color: black;">Top News</h1>
+        
         <ul>
-            {% for headline in headlines %}
-                <li>{{ headline }}</li>
+            {% for news_item in news_info %}
+                <li>
+                    <a href="{{ news_item.url }}" target="_blank" >
+                                           
+                        <h3>
+                            {% if news_item.image %}
+                                <img src="{{ news_item.image }}" alt="News Image" style="max-width: 100px; max-height: 100px;">
+                            {% else %}
+                                <img src="https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png" alt="Default Image" style="max-width: 100px; max-height: 100px;">
+                            {% endif %} 
+                            {{ news_item.headline }} : {{ news_item.datetime}}
+                        </h3>
+                        
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     {% endif %}
-
 
 
 {% endblock %}

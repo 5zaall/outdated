@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 
 {% block title %}
 Stock Details
@@ -107,20 +107,7 @@ Stock Details
     <br>
     <br>
 
-   <!-- Display news for the symbol -->
-   <h2 style="color: white; background-color: black; text-align: center;">Top Stories</h2>
-   {% if stock_news %}
-       <ul>
-           {% for news_item in stock_news %}
-               <li style="font-size: larger;"><strong>{{ news_item.get('source', 'N/A') }}:</strong> {{ news_item.get('title', 'N/A') }}</li>
-           {% endfor %}
-       </ul>
-   {% else %}
-       <p>No news available for this symbol.</p>
-   {% endif %}
-
 </body>
 </html>
-
 
 {% endblock %}
