@@ -87,8 +87,8 @@ class FlaskApp:
         self.__flask_app                        = None
         self.__flask_app_host                   = None
         self.__flask_app_port                   = None
-        self.__flask_app_mode                   = "DEVELOPMENT" 
-        #self.__flask_app_mode                   = "PRODUCTION"     
+        #self.__flask_app_mode                   = "DEVELOPMENT" 
+        self.__flask_app_mode                   = "PRODUCTION"     
 
         # Database
         self.__flask_app_connection             = None
